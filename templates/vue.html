@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" style="overflow: hidden">
+<head>
+    <meta charset="UTF-8">
+    <title>RamCal</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel='stylesheet' href="{{ url_for('static', filename='fullcalendar/fullcalendar.css') }}" />
+    <link rel='stylesheet' href="{{ url_for('static', filename='bootstrap.min.css') }}" />
+    <link href='/releases/fullcalendar/3.9.0/fullcalendar.print.css' rel='stylesheet' media='print' />
+    <script src="{{ url_for('static', filename='fullcalendar/lib/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='fullcalendar/lib/moment.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='fullcalendar/fullcalendar.js') }}"></script>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel='stylesheet' href="{{ url_for('static', filename='bootstrap.min.css') }}" />
+</head>
+<body>
+<script>
+    var dataSources = [];
+</script>
+<div class="row p-4">
+    <div class="col-8">
+        <div class="row pb-2">
+            <div class="col d-flex flex-row">
+                <div class="col px-0">
+                    <div class="card" style="height:100%">
+                        {% include "components/time.html" %}
+                    </div>
+                </div>
+                <div class="col flex-fill pr-0 pl-2">
+                <div class="card">
+                        {% include "components/weather.html" %}
+                </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                {% include "components/calendar.html" %}
+            </div>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="row pb-2">
+            <div class="col">
+                {% include "components/tasks.html" %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    {% include "components/todaycal.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        function update() {
+            dataSources.forEach(function (i) {
+                i();
+            });
+        }
+        update();
+        window.setInterval(update, 1000 * 60 * 5);
+    });
+</script>
+</body>
+</html>

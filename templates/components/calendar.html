@@ -1,0 +1,31 @@
+<div class="card">
+    <div class="card-body">
+        <div id="calendar"></div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('#calendar').fullCalendar({
+            events: '/api/get_calendar',
+            views: {
+                'basicFiveWeek': {
+            type: 'basic',
+                duration: { weeks: 5 }
+              }
+            },
+            defaultView: 'basicFiveWeek',
+            themeSystem: 'bootstrap4',
+            aspectRatio: 1.6,
+            header: {
+                        left: 'title',
+                        center: '',
+                        right: ''
+            }
+        });
+
+    });
+    function updateCalendar() {
+        $('#calendar').fullCalendar('refetchEvents');
+    }
+    dataSources.push(updateCalendar);
+</script>

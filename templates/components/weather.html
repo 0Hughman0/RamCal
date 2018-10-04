@@ -1,0 +1,53 @@
+<div class="card-body" id="weather">
+    <div class="col-sm">
+        <div class="row">
+            <div class="col-sm">
+                <h6>Day</h6>
+                <img v-bind:src="day.icon"/>
+                <h7>{$ day.temp $}° C</h7>
+                <h7>PP: {$ day.pp $}%</h7>
+            </div>
+            <div class="col-sm">
+                <h6>Night</h6>
+                <img v-bind:src="night.icon"/>
+                <h7>{$ night.temp $}° C</h7>
+                <h7>PP: {$ night.pp $}%</h7>
+            </div>
+            <div class="col-sm">
+                <h6>Tomorrow</h6>
+                <img v-bind:src="tomorrow.icon"/>
+                <h7>{$ tomorrow.temp $}° C</h7>
+                <h7>PP: {$ tomorrow.pp $}%</h7>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var weather = new Vue({
+        el: '#weather',
+        delimiters: ['{$', '$}'],
+        data: function(){
+            return {
+                day: {"icon": "",
+                    "temp": 0,
+                    "pp": 0},
+                night: {"icon": "",
+                    "temp": 0,
+                    "pp": 0},
+                tomorrow: {"icon": "",
+                    "temp": 0,
+                    "pp": 0}
+            }
+        }
+    });
+    function getWeather(){
+        axios
+            .get("{{ url_for('weather') }}")
+            .then(function(response){
+                weather.day = response.data.day;
+                weather.night = response.data.night;
+                weather.tomorrow = response.data.tomorrow});
+    }
+    dataSources.push(getWeather);
+</script>

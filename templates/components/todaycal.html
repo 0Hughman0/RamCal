@@ -1,0 +1,31 @@
+<div class="card-body" id="date">
+        <h2>Today - {$ date $}</h2>
+</div>
+<div id="today-cal"></div>
+<script>
+    $('#today-cal').fullCalendar({
+        events: '/api/get_calendar',
+        defaultView: 'listDay',
+        nowIndicator: true,
+        listDayFormat: false,
+        themeSystem: 'bootstrap4',
+        //height: 'auto',
+        header: false,
+        toolbar: false
+    });
+    function updateDayCalendar() {
+        $('#today-cal').fullCalendar('refetchEvents');
+    }
+    var date = new Vue({
+        el: '#date',
+        delimiters: ['{$', '$}'],
+        data: {
+            date: ''
+        }});
+        function upDate() {
+            date.date = new Date().toLocaleDateString();
+        }
+        upDate();
+    dataSources.push(updateDayCalendar);
+    dataSources.push(upDate);
+</script>

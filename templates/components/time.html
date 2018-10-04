@@ -1,0 +1,16 @@
+<div class="card-body" id="time">
+    <h2>{$ time $}</h2>
+</div>
+<script>
+    var clock = new Vue({
+    el: '#time',
+    delimiters: ['{$', '$}'],
+    data: {
+        time: ''
+    }});
+    function tick() {
+        clock.time = new Date().toLocaleTimeString();
+    }
+    tick();
+    window.setInterval(tick, 1000);
+</script>

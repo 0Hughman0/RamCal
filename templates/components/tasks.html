@@ -1,0 +1,63 @@
+<div class="card" id="tasks">
+    <div class="card-body">
+        <h2>Tasks</h2>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <bar v-bind:blocks="dayBar" v-bind:min="min" v-bind:max="max"></bar>
+            </li>
+            <div v-for="task in tasks">
+                <li class="list-group-item">
+                    <h6 class="card-subtitle mb-2">{$ task.name $}</h6>
+                    <bar v-bind:blocks="task.blocks" v-bind:min="min" v-bind:max="max"></bar>
+                </li>
+            </div>
+        </ul>
+    </div>
+</div>
+<script>
+    block = Vue.component('block',
+        {
+            delimiters: ['{$', '$}'],
+            props: ['colour',
+                    'start',
+                    'duration',
+                    'min',
+                    'max'],
+            template: `
+            <div v-bind:class="colour" role="progressbar" v-bind:style="{width: duration + '%'}" v-bind:aria-valuenow="start" v-bind:aria-valuemin="min" v-bind:aria-valuemax="max"></div>
+            `
+    });
+    bar = Vue.component('bar', {
+        delimiters: ['{$', '$}'],
+        props: ["blocks", "min", "max"],
+        template: `
+        <div class="progress">
+            <block v-bind:colour="block.colour" v-bind:start="block.start" v-bind:duration="block.duration" v-bind:min="min" v-bind:max="max" v-for="block in blocks"></block>
+        </div>
+        `
+    });
+
+    let tasks = new Vue({
+        el: '#tasks',
+        delimiters: ['{$', '$}'],
+        data: function(){
+            return {
+                dayBar: [],
+                tasks: [],
+                min: 0,
+                max: 1
+            }
+        }
+    });
+    function getTasks(){
+        axios
+            .get("{{ url_for('tasks') }}")
+            .then(function (response){
+                tasks.min = response.data.min;
+                tasks.max = response.data.max;
+                tasks.tasks = response.data.tasks;
+                tasks.dayBar = response.data.dayBar;
+            });
+    }
+    dataSources.push(getTasks);
+</script>

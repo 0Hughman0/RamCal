@@ -1,0 +1,12 @@
+{
+  "attendees": "rammers2@hotmail.co.uk",
+  "start": {
+    "timeZone": "Europe/London"
+  },
+  "end": {
+    "timeZone": "Europe/London"
+  },
+  "reminders": {
+    "useDefault": true
+  }
+}
