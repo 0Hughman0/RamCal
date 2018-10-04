@@ -5,7 +5,11 @@ A dashboard/ calendar webapp written using Python (flask), javascript (vue.js) a
 The motivator for this project was to write my own dashboard to have in my room, to help me keep on top of multiple
 concurrent tasks.
 
+![Overview](https://raw.githubusercontent.com/0Hughman0/RamCal/master/screenshots/screenshot.png "RamCal")
+
 ## Task Gannt
+
+![Gantt](https://raw.githubusercontent.com/0Hughman0/RamCal/master/screenshots/gantt.png "Gantt")
 
 Uniquely RamCal is able to create a Gantt chart of upcoming tasks and display it automatically.
 
@@ -40,9 +44,9 @@ possible locations, by searching for names. Simply enter the name of your usual 
 ## Setup
 
 1. Clone the repository to wherever you want it with `git clone https://github.com/0Hughman0/RamCal/`
-2. Create and activate a virtual environment here with `virtualenv --no-site-packages env` and `source env/bin/activate`
+2. Create and activate a virtual environment here with `virtualenv --python=python3 --no-site-packages env` and `source env/bin/activate`
 3. Install dependencies with `python -m pip install -r requirements.txt`.
-4. Enter your Met Office API key into `credentials/metffoce.creds` file.
+4. Enter your Met Office API key into `credentials/metffoce.creds` file (see above).
 5. Run `weather.py` with `python weather.py`, and follow instructions to find location ID, and replace `LOCAION_ID` with
 your location ID.
 6. Set the `FLASK_APP` environment variable to `app.py` with `export FLASK_APP=app.py`. (you can put this into your activate script if you're feeling wizzy).
@@ -55,3 +59,7 @@ calendar, then it will re-direct you back to the dashboard. These credentials ar
 ## DISCLAIMER
 
 This app is only recommended for use within an internal network, and is not secure if exposed to the big bad internet.
+
+## Other Stuff
+
+This app also makes large use of the Full Calendar js library: https://fullcalendar.io/
