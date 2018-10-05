@@ -22,11 +22,11 @@ def next_work(to):
     day = to.day + 1
     if to.time() <= WORK_TIME_START: # we're in the morning
         day -= 1
-    return datetime.combine(to.date(), WORK_TIME_START, tzinfo=to.tzinfo)
+    return datetime.combine(to.date(), WORK_TIME_START).replace(tzinfo=to.tzinfo)
 
 
 def next_rest(to):
-    return datetime.combine(to.date(), WORK_TIME_END, tzinfo=to.tzinfo)
+    return datetime.combine(to.date(), WORK_TIME_END).replace(tzinfo=to.tzinfo)
 
 
 class TimeBlock:
