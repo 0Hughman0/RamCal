@@ -10,6 +10,10 @@ from gantt import Gantt
 from user import User
 from weather import Forecast
 
+import os
+
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
 
 # globals
 app = Flask(__name__)
@@ -20,7 +24,7 @@ def logged_in(route):
     @wraps(route)
     def wrapped(*args, **kwargs):
         if not user.service:
-            return redirect(user.prepare_code_init())
+            return redirect(user.prepare_login_url())
         return route(*args, **kwargs)
     return wrapped
 
@@ -41,12 +45,11 @@ def home():
     return render_template("vue.html")
 
 
-@app.route("/api/load_user_credentials")
-def load_credentials():
-    if not user.service and user.awaiting_credentials:
-        code = request.args['code']
-        user.init_service_from_code(code)
-        user.save_creds()
+@app.route("/api/authenticate_user")
+def authenticate_user():
+    if not user.credentials:
+        user.init_service_from_url(request.url)
+        user.store_creds()
     return redirect(url_for('home'))
 
 
@@ -79,4 +82,4 @@ def weather():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", debug=True, use_reloader=False)
+    app.run(host="127.0.0.1", debug=False, use_reloader=False)

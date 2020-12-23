@@ -1,14 +1,15 @@
-import httplib2
+import json
+
 from flask import url_for
+
 from googleapiclient import discovery
-from oauth2client import client
-from oauth2client.file import Storage
-
+from google_auth_oauthlib.flow import Flow
+from google.oauth2.credentials import Credentials
 from gcalendar import Calendars
+from google_auth_httplib2 import AuthorizedHttp
 
-# Fix because http2 lib is not threadsafe (which flask uses when not run in debug mode!)
+# Required to work with Flask - think to do with flask being multithreaded...
 import httplib2shim
-httplib2shim.patch()
 
 
 SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
@@ -22,9 +23,9 @@ class User:
     user = None
 
     def __init__(self):
-        self.credentials = None
         self.service = None
-        self.awaiting_credentials = False
+        self.flow = None
+        self.credentials = None
         self.user = self
 
     @classmethod
@@ -33,38 +34,35 @@ class User:
             raise RuntimeError("Attempting to create more than 1 user instance 8O")
         return super().__new__(*args, **kwargs)
 
+    def prepare_login_url(self):
+        self.flow = Flow.from_client_secrets_file(CLIENT_SECRET_FILE,
+                                                  scopes=SCOPES,
+                                                  redirect_uri=url_for('authenticate_user', _external=True))
+        return self.flow.authorization_url(access_type='offline', prompt='consent', include_granted_scopes='true')[0]
+
+    def init_service_from_url(self, url):
+        self.flow.fetch_token(authorization_response=url)
+        self.credentials = self.flow.credentials
+
+        self._init_service()
+
     def init_service_from_storage(self):
-        storage = Storage(CREDENTIALS_FILE)
-        credentials = storage.get()
-        if credentials and not credentials.invalid:
-            self.credentials = credentials
-        else:
-            raise KeyError("Couldn't load user credentials")
-        self.create_service()
+        try:
+            self.credentials = Credentials.from_authorized_user_file(CREDENTIALS_FILE)
+        except (FileNotFoundError, json.JSONDecodeError):
+            raise KeyError("Couldn't find stored credentials")
 
-    def init_service_from_code(self, code):
-        if not self.awaiting_credentials:
-            raise RuntimeError("WTF is going on, no-one asked for this!")
-        credentials = self.user.flow.step2_exchange(code)
-        self.user.credentials = credentials
-        self.awaiting_credentials = False
-        self.create_service()
+        if not self.credentials.valid:
+            raise KeyError("Invalid credentials")
 
-    def save_creds(self):
-        storage = Storage(CREDENTIALS_FILE)
-        storage.put(self.credentials)
+        self._init_service()
 
-    def create_service(self):
-        http = self.credentials.authorize(httplib2.Http())#cache='.cache'))
-        service = discovery.build('calendar', 'v3', http=http)
-        self.service = service
+    def _init_service(self):
+        self.service = discovery.build('calendar', 'v3', http=AuthorizedHttp(self.credentials, http=httplib2shim.Http()))
 
-    def prepare_code_init(self):
-        self.flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE,
-                                                   scope=SCOPES,
-                                                   redirect_uri=url_for('load_credentials', _external=True))
-        self.awaiting_credentials = True
-        return self.flow.step1_get_authorize_url()
+    def store_creds(self):
+        with open(CREDENTIALS_FILE, 'w') as f:
+            f.write(self.credentials.to_json())
 
     def get_calendars(self):
         return Calendars(self.service)
