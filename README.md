@@ -44,12 +44,13 @@ possible locations, by searching for names. Simply enter the name of your usual 
 ## Setup
 
 1. Clone the repository to wherever you want it with `git clone https://github.com/0Hughman0/RamCal/`
+2. Navigate into the directory with `Pipfile` in it.
 2. Use (pipenv)[https://pipenv.pypa.io/en/latest/] to create a venv and install the dependencies with `pipenv install`.
 4. Enter your Met Office API key into `credentials/metffoce.creds` file (see above).
-5. Run `weather.py` with `python weather.py`, and follow instructions to find location ID, and replace `LOCAION_ID` (line 8 of `weather.py`) with
+5. Run `pipenv run python weather.py` with, and follow instructions to find location ID, and replace `LOCAION_ID` (line 8 of `weather.py`) with
 your location ID.
 6. Set the `FLASK_APP` environment variable to `app.py` with `export FLASK_APP=app.py`. (you can put this into your activate script if you're feeling wizzy).
-7. Run the web server with `flask run`
+7. Run the web server with `pipenv run flask run`
 8. In your browser, navigate to `http://127.0.0.1:5000`, your first time, google will ask you to approve access to your
 calendar, then it will re-direct you back to the dashboard. These credentials are stored locally (in
 `credentials/google.creds`), meaning you won't have to log in every time.

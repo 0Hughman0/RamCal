@@ -50,16 +50,13 @@ class Forecast:
 
 
 def find_location_id(location_name):
-    import pandas as pd
     locations = quick('val/wxfcs/all/datatype/sitelist')['Locations']['Location']
 
-    f = pd.DataFrame.from_dict(locations)
-    f = f.fillna("")
-
-    f = f[f['name'].str.contains(location_name, regex=False)]  # Regex True fucks up with brackets!
-    if len(f.index) == 1:
-        return f['id'].iloc[0]
-    raise KeyError("Ambiguous name got {} results, pls refine from: {}".format(len(f.index), f['name']))
+    name_ids = [(entry['name'], entry['id']) for entry in locations]
+    matches = [entry for entry in name_ids if location_name in entry[0]]
+    if len(matches) == 1:
+        return matches[0][1]
+    raise KeyError("Ambiguous name got please refine from: {}".format([entry[0] for entry in matches]))
 
 
 def quick(url, **kwargs):
@@ -82,9 +79,8 @@ def weather():
 
 if __name__ == '__main__':
     while True:
-        location = input('enter location name')
+        location = input('Enter location name: ')
         try:
-            print('id is:', find_location_id(location))
-            break
+            print('ID is {ID}, please set the value of LOCATION_ID in weather.py to {ID}:'.format(ID=find_location_id(location)))
         except KeyError as e:
             print(e)

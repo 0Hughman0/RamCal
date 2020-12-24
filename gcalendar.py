@@ -1,4 +1,3 @@
-import json
 import datetime
 import itertools
 import re
@@ -7,9 +6,6 @@ from datetime import timedelta, date
 from dateutil.parser import parse
 
 from gantt import DEFAULT_ERROR, TaskBar
-
-with open('event_template.json') as f:
-    event_template = json.load(f)
 
 
 class JSONBase:
